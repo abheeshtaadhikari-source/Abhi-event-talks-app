@@ -1,6 +1,7 @@
 # BigQuery Release Notes Explorer & Share
 
 A premium, modern web application built using Python Flask and vanilla client-side technologies (HTML, CSS, JavaScript) that fetches, parses, and segments the official Google Cloud BigQuery release notes and provides an integrated workflow to draft and share updates directly to X (Twitter).
+This is a simple work done usnig Google Antigravity for learning purpose.
 
 Live Repository: [https://github.com/abheeshtaadhikari-source/Abhi-event-talks-app](https://github.com/abheeshtaadhikari-source/Abhi-event-talks-app)
 
