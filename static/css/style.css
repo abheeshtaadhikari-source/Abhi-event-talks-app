@@ -35,6 +35,75 @@
     --font-body: 'Inter', sans-serif;
 }
 
+/* ==========================================================================
+   Light Mode Overrides
+   ========================================================================== */
+body.light-theme {
+    --bg-base: #f8fafc;
+    --bg-surface: rgba(255, 255, 255, 0.8);
+    --bg-surface-hover: rgba(255, 255, 255, 0.95);
+    --border-color: rgba(0, 0, 0, 0.08);
+    --border-color-hover: rgba(0, 0, 0, 0.16);
+    
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    
+    --color-feature-glow: rgba(16, 185, 129, 0.06);
+    --color-announcement-glow: rgba(59, 130, 246, 0.06);
+    --color-issue-glow: rgba(245, 158, 11, 0.06);
+    --color-breaking-glow: rgba(239, 68, 68, 0.06);
+    --color-change-glow: rgba(139, 92, 246, 0.06);
+    --color-default-glow: rgba(107, 114, 128, 0.06);
+}
+
+body.light-theme .glow-bg {
+    background: 
+        radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.04) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.04) 0%, transparent 40%);
+}
+
+body.light-theme .app-header {
+    background: rgba(248, 250, 252, 0.8);
+}
+
+body.light-theme .search-wrapper input,
+body.light-theme .filter-wrapper select {
+    background: #ffffff;
+    color: #0f172a;
+}
+
+body.light-theme .stat-badge {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+body.light-theme .modal-content {
+    background: #ffffff;
+    color: #0f172a;
+}
+
+body.light-theme .composer-container {
+    background: #f1f5f9;
+}
+
+body.light-theme .tweet-textarea {
+    color: #0f172a;
+}
+
+body.light-theme .btn-secondary {
+    background: rgba(15, 23, 42, 0.05);
+    color: #0f172a;
+}
+
+body.light-theme .btn-secondary:hover {
+    background: rgba(15, 23, 42, 0.08);
+}
+
+body.light-theme .card-content code {
+    background: rgba(15, 23, 42, 0.05);
+}
+
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -145,6 +214,81 @@ body {
     text-transform: uppercase;
     font-weight: 600;
 }
+
+.actions-nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.theme-toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.theme-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 22px;
+}
+
+.theme-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.theme-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: 0.3s;
+    border-radius: 22px;
+    border: 1px solid var(--border-color);
+}
+
+body.light-theme .theme-slider {
+    background-color: rgba(15, 23, 42, 0.05);
+}
+
+.theme-slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #ffffff;
+    transition: 0.3s;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+body.light-theme .theme-slider:before {
+    background-color: #3b82f6;
+}
+
+input:checked + .theme-slider {
+    background-color: #3b82f6;
+}
+
+input:checked + .theme-slider:before {
+    transform: translateX(22px);
+}
+
+.theme-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    user-select: none;
+}
+
 
 /* ==========================================================================
    Buttons & Inputs
@@ -515,6 +659,43 @@ body {
 .link-source:hover {
     color: var(--text-primary);
     text-decoration: underline;
+}
+
+.card-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.btn-copy-card {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    padding: 0.4rem 0.85rem;
+    font-size: 0.8rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: 500;
+}
+
+.btn-copy-card:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--text-primary);
+    border-color: var(--border-color-hover);
+}
+
+body.light-theme .btn-copy-card {
+    background: rgba(15, 23, 42, 0.03);
+    color: var(--text-secondary);
+}
+
+body.light-theme .btn-copy-card:hover {
+    background: rgba(15, 23, 42, 0.08);
+    color: var(--text-primary);
 }
 
 .btn-share {

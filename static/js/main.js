@@ -11,6 +11,9 @@ const lastUpdatedTimeEl = document.getElementById('last-updated-time');
 const notesCountEl = document.getElementById('notes-count');
 const searchInput = document.getElementById('search-input');
 const typeFilter = document.getElementById('type-filter');
+const exportCsvBtn = document.getElementById('export-csv-btn');
+const themeCheckbox = document.getElementById('theme-checkbox');
+const themeText = document.getElementById('theme-text');
 
 const loadingState = document.getElementById('loading-state');
 const errorState = document.getElementById('error-state');
@@ -144,9 +147,14 @@ function renderNotesGrid() {
             </div>
             <div class="card-actions">
                 <a href="${note.link}" class="link-source" target="_blank" rel="noopener noreferrer" id="source-link-${note.id}">Source Link ↗</a>
-                <button class="btn-share" data-id="${note.id}" id="share-btn-${note.id}">
-                    <span class="share-icon">🐦</span> Share
-                </button>
+                <div class="card-buttons">
+                    <button class="btn-copy-card" data-id="${note.id}" id="copy-btn-${note.id}">
+                        <span class="copy-icon">📋</span> Copy
+                    </button>
+                    <button class="btn-share" data-id="${note.id}" id="share-btn-${note.id}">
+                        <span class="share-icon">🐦</span> Share
+                    </button>
+                </div>
             </div>
         `;
         
@@ -156,7 +164,11 @@ function renderNotesGrid() {
             link.setAttribute('rel', 'noopener noreferrer');
         });
         
-        // Add event listener to share button
+        // Add event listeners to card buttons
+        card.querySelector('.btn-copy-card').addEventListener('click', () => {
+            copyCardContent(note);
+        });
+        
         card.querySelector('.btn-share').addEventListener('click', () => {
             openTweetModal(note);
         });
@@ -272,6 +284,51 @@ function showToast(message) {
     }, 2500);
 }
 
+function copyCardContent(note) {
+    const cleanText = stripHtml(note.content_html);
+    const formattedText = `[BigQuery ${note.type}] (${note.date})\n\n${cleanText}\n\nRead more: ${note.link}`;
+    navigator.clipboard.writeText(formattedText)
+        .then(() => {
+            showToast('Copied release note to clipboard!');
+        })
+        .catch(err => {
+            console.error('Failed to copy text: ', err);
+            showToast('Failed to copy text.');
+        });
+}
+
+function exportToCSV() {
+    if (filteredNotes.length === 0) {
+        showToast('No notes to export.');
+        return;
+    }
+    
+    const headers = ['ID', 'Date', 'Category', 'Content', 'Link'];
+    const rows = filteredNotes.map(note => [
+        note.id,
+        note.date,
+        note.type,
+        stripHtml(note.content_html),
+        note.link
+    ]);
+    
+    // Convert array values into CSV format with escaping
+    const csvContent = [
+        headers.join(','),
+        ...rows.map(row => row.map(val => `"${val.replace(/"/g, '""')}"`).join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `bigquery_release_notes_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('Exported to CSV successfully!');
+}
+
 /* ==========================================================================
    Event Listeners
    ========================================================================== */
@@ -281,6 +338,7 @@ retryBtn.addEventListener('click', () => fetchNotes(true));
 
 searchInput.addEventListener('input', applyFilters);
 typeFilter.addEventListener('change', applyFilters);
+exportCsvBtn.addEventListener('click', exportToCSV);
 
 clearFiltersBtn.addEventListener('click', () => {
     searchInput.value = '';
@@ -300,6 +358,19 @@ tweetTextarea.addEventListener('input', updateCharCounter);
 composerTweetBtn.addEventListener('click', postToTwitter);
 copyTweetBtn.addEventListener('click', copyTweetToClipboard);
 
+// Theme Switcher Events
+themeCheckbox.addEventListener('change', () => {
+    if (themeCheckbox.checked) {
+        document.body.classList.add('light-theme');
+        themeText.textContent = 'Light Mode';
+        localStorage.setItem('theme', 'light');
+    } else {
+        document.body.classList.remove('light-theme');
+        themeText.textContent = 'Dark Mode';
+        localStorage.setItem('theme', 'dark');
+    }
+});
+
 // Keyboard Events
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && !tweetModal.classList.contains('hidden')) {
@@ -307,7 +378,20 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// Load Feed on init
+// Load Feed & Theme on init
 window.addEventListener('DOMContentLoaded', () => {
+    // Initialize Theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+        themeCheckbox.checked = true;
+        document.body.classList.add('light-theme');
+        themeText.textContent = 'Light Mode';
+    } else {
+        themeCheckbox.checked = false;
+        document.body.classList.remove('light-theme');
+        themeText.textContent = 'Dark Mode';
+    }
+    
     fetchNotes();
 });
+
