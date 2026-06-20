@@ -376,6 +376,12 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && !tweetModal.classList.contains('hidden')) {
         closeTweetModal();
     }
+    
+    // Press '/' to focus the search input box
+    if (e.key === '/' && document.activeElement !== searchInput && document.activeElement.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        searchInput.focus();
+    }
 });
 
 // Load Feed & Theme on init
